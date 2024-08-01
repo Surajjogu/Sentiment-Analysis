@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentiment Analysis Model</title>
+  <style>
+    body {
+      background-color: #2B9E81; /* Sea Green */
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .container h1 {
+      text-align: center;
+      color: #2B9E81; /* Sea Green */
+    }
+    form {
+      margin-top: 20px;
+    }
+    input[type='file'] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #2B9E81; /* Sea Green */
+      color: #fff;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background-color: #3CB371; /* Medium Sea Green */
+    }
+    .prediction {
+      margin-top: 20px;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #2B9E81; /* Sea Green */
+      color: white;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Sentiment Analysis</h1>
+    <form id="uploadForm" action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+      <input type="file" id="csvFile" name="csvFile" required="required"/>
+      <button type="submit" class="btn">Upload and Predict</button>
+    </form>
+    <div class="prediction">
+       {% if prediction %}
+        <h3>Prediction Results:</h3>
+        <canvas id="sentimentChart"></canvas>
+        <table>
+          <tr>
+            <th>Text</th>
+            <th>Prediction Value</th>
+          </tr>
+          {% for row in prediction %}
+          <tr>
+            <td>{{ row['text'] }}</td>
+            <td>{{ row['Predicted_Sentiment_Label'] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      {% endif %}     
+    </div>
+  </div>
+  <script>
+    {% if sentiment_counts %}
+    var ctx = document.getElementById('sentimentChart').getContext('2d');
+    var sentimentChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Negative', 'Neutral', 'Positive'],
+            datasets: [{
+                label: 'Sentiment Counts',
+                data: [
+                  {{ sentiment_counts['Negative']|default(0) }},
+                  {{ sentiment_counts['Neutral']|default(0) }},
+                  {{ sentiment_counts['Positive']|default(0) }}
+                ],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    {% endif %}
+  </script>
+</body>
+</html>
