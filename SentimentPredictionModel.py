@@ -29,7 +29,8 @@ def clean_text(text):
 
 # Get the train data
 
-tweets_df = pd.read_csv('C:/Users/kalpavruksh_sjo/Downloads/Train.csv')
+#tweets_df = pd.read_csv('C:/Users/kalpavruksh_sjo/Downloads/Train.csv')
+tweets_df = pd.read_csv("https://raw.githubusercontent.com/Surajjogu/Sentiment-Analysis/main/Train.csv")
 
 # Select relevant columns
 
